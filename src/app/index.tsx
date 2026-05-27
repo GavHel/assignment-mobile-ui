@@ -1,98 +1,189 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Image,
+  Button,
+  Alert,
+} from "react-native";
+import { Stack } from "expo-router";
+import Post from "../../components/Post";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+const DATA = [
+  {
+    id: "1",
+    subreddit: "r/mobiledev",
+    user: "u/gavin",
+    title: "Mobile UI Design Assignment",
+    image: "https://picsum.photos/500",
+    upvotes: 236,
+    comments: 112,
+  },
+  {
+    id: "2",
+    subreddit: "r/memes",
+    user: "u/funny",
+    title:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris.",
+    image: "https://picsum.photos/501",
+    upvotes: 542,
+    comments: 78,
+  },
+];
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+export default function Index() {
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+      <View style={styles.container}>
+        {/* HEADER */}
+        <View style={styles.header}>
+          <View style={styles.leftHeader}>
+            <Text style={styles.menu}>☰</Text>
+            <Image
+              source={{
+                uri: "https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-57x57.png",
+              }}
+              style={styles.logo}
+            />
+          </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+          <View style={styles.searchBar}>
+            <Text style={styles.searchText}>Find anything</Text>
+          </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+          <Text style={styles.add}>＋</Text>
+        </View>
+
+        {/* POSTS */}
+        <FlatList
+          data={DATA}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <Post post={item} />}
+          contentContainerStyle={{ paddingBottom: 140 }}
+        />
+
+        {/* ALERT BUTTON */}
+        <View style={styles.alertButtonContainer}>
+          <Button
+            title="Alert"
+            color="#ff4500"
+            onPress={() => Alert.alert("Alert Button pressed")}
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        {/* BOTTOM NAV */}
+        <View style={styles.bottomNav}>
+          <View style={styles.navItemContainer}>
+            <Text style={styles.navIcon}>🏠</Text>
+            <Text style={styles.navLabelActive}>Home</Text>
+          </View>
+
+          <View style={styles.navItemContainer}>
+            <Text style={styles.navIcon}>📥</Text>
+            <Text style={styles.navLabel}>Inbox</Text>
+          </View>
+
+          <View style={styles.navItemContainer}>
+            <Text style={styles.navIcon}>🙂</Text>
+            <Text style={styles.navLabel}>You</Text>
+          </View>
+        </View>
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: "#000",
   },
-  safeArea: {
+
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 12,
+  },
+
+  leftHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 8,
+  },
+
+  menu: {
+    color: "#fff",
+    fontSize: 18,
+    marginRight: 6,
+  },
+
+  logo: {
+    width: 20,
+    height: 20,
+  },
+
+  searchBar: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    borderWidth: 1,
+    borderColor: "#ff4500",
+    borderRadius: 25,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+
+  searchText: {
+    color: "#888",
+    fontSize: 13,
   },
-  title: {
-    textAlign: 'center',
+
+  add: {
+    color: "#fff",
+    fontSize: 20,
+    marginLeft: 10,
   },
-  code: {
-    textTransform: 'uppercase',
+
+  alertButtonContainer: {
+    position: "absolute",
+    bottom: 70, 
+    left: 10,
+    right: 10,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+
+  bottomNav: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: "#1a1a1a",
+    backgroundColor: "#000",
+  },
+
+  navItemContainer: {
+    alignItems: "center",
+  },
+
+  navIcon: {
+    fontSize: 18,
+    color: "#888",
+  },
+
+  navLabel: {
+    fontSize: 11,
+    color: "#888",
+    marginTop: 2,
+  },
+
+  navLabelActive: {
+    fontSize: 11,
+    color: "#fff",
+    marginTop: 2,
   },
 });
