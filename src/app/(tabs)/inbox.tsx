@@ -9,7 +9,7 @@ const MESSAGES = [
   {
     id: "1",
     title: "Trending",
-    message: "r/worldnews is blowing up right now",
+    message: "r/technology is trending",
     time: "2h",
   },
   {
